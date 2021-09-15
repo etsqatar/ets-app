@@ -1,7 +1,7 @@
 frappe.provide("frappe.treeview_settings");
 
 frappe.treeview_settings['Task'] = {
-	get_tree_nodes: "ets.ets.doctype.task.task.get_children",
+	get_tree_nodes: "ets.ets.doctype.project.task.task.get_children",
 	add_tree_node: "erpnext.projects.doctype.task.task.add_node",
 	filters: [
 		{
