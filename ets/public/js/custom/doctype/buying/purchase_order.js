@@ -1,11 +1,8 @@
-// return placeholder text if link_field value is falsy
 let text_to_show = value => {
 	return value ? value : '';
 };
 
-// this function will be called from the Form's onload/onrefresh 
-// to fetch the value from the DB and render the Link field title initially
-let init_field_title = (frm, link_field_name) => {
+let init_field_task_title = (frm, link_field_name) => {
 	if (!frm.fields_dict[link_field_name].value)
 		return;
 	frappe.db.get_doc(
@@ -16,15 +13,35 @@ let init_field_title = (frm, link_field_name) => {
 	});
 };
 
-// the render function itself, just to be DRY
 let render_field_title = (frm, title, text) => {
 	let field = frm.fields_dict[title];
 	field.label_span.innerHTML = `${__(field._label)}&nbsp-&nbsp<b>${text}</b>`;
 };
 
+let autofill_project = (child_table, project_field, project) => {
+	if (project && child_table && child_table.length) {
+		let doctype = child_table[0].doctype;
+		$.each(child_table || [], function(i, item) {
+			frappe.model.set_value(doctype, item.name, project_field, project);
+		});
+	}
+};
+
+let autofill_task = (child_table, task_field, task) => {
+	if (task && child_table && child_table.length) {
+		let doctype = child_table[0].doctype;
+		$.each(child_table || [], function(i, item) {
+			frappe.model.set_value(doctype, item.name, task_field, task);
+		});
+	}
+};
+
 frappe.ui.form.on('Purchase Order', {
 	refresh: frm => {
-		// init_field_title(frm, 'parent_task');
+		init_field_task_title(frm, 'set_project_task_group');
+		init_field_task_title(frm, 'set_project_task');
+		autofill_project(frm.doc.items,'project',frm.doc.set_project);
+		autofill_project(frm.doc.items,'task',frm.doc.set_project_task);
 	},
 
 	// update the link field title on the selection change

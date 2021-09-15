@@ -100,6 +100,12 @@ doctype_tree_js = {"Task" : "public/js/custom/doctype/project/task/task_tree.js"
 #	}
 # }
 
+doc_events = {
+	"Purchase Order": {
+        "validate": "ets.ets.doctype.buying.purchase_order.validate"
+    },
+}
+
 # Scheduled Tasks
 # ---------------
 
