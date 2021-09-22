@@ -1,0 +1,6 @@
+.field-disabled {
+    cursor: not-allowed;
+    background-color: var(--input-disabled-bg);
+    opacity: 1; 
+    pointer-events:none;
+}

@@ -13,7 +13,7 @@ app_license = "MIT"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/ets/css/ets.css"
+app_include_css = "/assets/ets/css/ets.css"
 # app_include_js = "/assets/ets/js/ets.js"
 
 # include js, css files in header of web template
@@ -102,7 +102,8 @@ doctype_tree_js = {"Task" : "public/js/custom/doctype/project/task/task_tree.js"
 
 doc_events = {
 	"Purchase Order": {
-        "validate": "ets.ets.doctype.buying.purchase_order.validate"
+        "validate": "ets.ets.doctype.buying.purchase_order.validate",
+        "on_update": "ets.ets.doctype.buying.purchase_order.on_update",
     },
 }
 
