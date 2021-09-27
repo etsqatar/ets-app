@@ -15,7 +15,7 @@
  "message": "Hello, \n\n{{ _(\"Driving license for Employee:\") }} {{doc.Employee}} {{_(\"is set to expire on\")}} {{doc.expiry_date}}.",
  "modified": "2021-07-19 16:23:27.496735",
  "modified_by": "Administrator",
- "module": "HR",
+ "module": "Ets",
  "name": "Notification for Driving License Expiry",
  "owner": "Administrator",
  "recipients": [
