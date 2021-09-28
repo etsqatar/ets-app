@@ -51,7 +51,7 @@ def process_timesheet(doc):
             emp_Ot = d[1][4:4+31] # Employee OT
             emp_attendence = d[2][4:4+31] # Attendance
             emp_project = d[3][4:4+31] # Project
-            # ets_logger.debug(emp_id)
+            ets_logger.debug(emp_id)
             emp = frappe.get_value('Employee', emp_id, 'name')
             company = frappe.get_value('Employee', emp_id, 'company')
             emp = True
@@ -124,7 +124,7 @@ def process_timesheet(doc):
                                     "tittle" : "Import Timesheet"
                                 },
                             )
-                        payrollEntry.timesheet_progress = count*100/count_dataX
+                        # payrollEntry.timesheet_progress = count*100/count_dataX
                         # frappe.publish_progress(count*100/len(names), title = _("Creating Delivery Note..."), description = name)
                     except Exception as e:
                         frappe.publish_realtime(
@@ -164,6 +164,7 @@ def process_timesheet(doc):
     )
     
     payrollEntry.flags.ignore_permissions = True
+    payrollEntry.flags.ignore_validate_update_after_submit = True
     payrollEntry.is_timesheet_processing = False
     payrollEntry.timesheet_imported = True
     payrollEntry.save()

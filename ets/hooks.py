@@ -106,6 +106,9 @@ doc_events = {
         "validate": "ets.ets.doctype.buying.purchase_order.validate",
         "on_update": "ets.ets.doctype.buying.purchase_order.on_update",
     },
+	"Salary Slip": {
+        "validate": "ets.docs.payroll.salary_slip.validate",
+    },
 }
 
 # Scheduled Tasks
