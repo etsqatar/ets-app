@@ -7,36 +7,39 @@
 
 frappe.ui.form.on('Payroll Entry', {
 		refresh: function (frm) {
-		frm.add_custom_button(__('Process Timesheet'), () => {
-			// frappe.call({
-			// 	method: 'ets.docs.payroll.payroll_entry.process_timesheet',
-			// 	doc: frm.doc,
-			// }).then(r => {
-			// 	console.log(r)
-			// });
-			// console.log(frm)
-			frappe.show_alert({
-				message: "Processing Timesheet",
-				indicator: 'orange'
+		if (frm.doc.timesheet_imported == 0) {
+			frm.add_custom_button(__('Process Timesheet'), () => {
+				// frappe.call({
+				// 	method: 'ets.docs.payroll.payroll_entry.process_timesheet',
+				// 	doc: frm.doc,
+				// }).then(r => {
+				// 	console.log(r)
+				// });
+	
+				frappe.show_alert({
+					message: "Processing Timesheet",
+					indicator: 'orange'
+				});
+				
+				frappe.call({
+					method: "ets.docs.payroll.payroll_entry.process_timesheet_backgroupjob",
+					args: {
+						doc: frm.doc.name
+					},
+					freeze: true,
+					freeze_message: __("Processing Timesheet..."),
+					callback: function(r) {
+						// frm.reload_doc();
+						// console.log(r)
+						// if(!r.exc) {
+						// 	clearInterval(frm.page["interval"]);
+						// 	frm.page.set_indicator(__('Import Successful'), 'blue');
+						// 	create_reset_button(frm);
+						// }
+					}
+				});
 			});
-			frappe.call({
-				method: "ets.docs.payroll.payroll_entry.process_timesheet_backgroupjob",
-				args: {
-					doc: frm.doc.name
-				},
-				freeze: true,
-				freeze_message: __("Processing Timesheet..."),
-				callback: function(r) {
-					frm.reload_doc();
-					// console.log(r)
-					// if(!r.exc) {
-					// 	clearInterval(frm.page["interval"]);
-					// 	frm.page.set_indicator(__('Import Successful'), 'blue');
-					// 	create_reset_button(frm);
-					// }
-				}
-			});
-		});
+		}
 	},
 	setup(frm) {
 		// frappe.realtime.on('data_import_refresh', ({ data_import }) => {
@@ -66,10 +69,10 @@ frappe.ui.form.on('Payroll Entry', {
 				let message;
 				if (data.success) {
 					let message_args = [data.tittle,data.current, data.total];
-					message =__('{0} Importing {1} of {2}', message_args);
+					message =__('{0} - Importing {1} of {2}', message_args);
 				}
 				if (data.skipping) {
-					message = __('{0} Skipping {1} of {2} {3}', [
+					message = __('{0} - Skipping {1} of {2} {3}', [
 						data.tittle,
 						data.current,
 						data.total,
@@ -100,10 +103,17 @@ frappe.ui.form.on('Payroll Entry', {
 		frappe.confirm('Are you sure you want to proceed?',
 		() => {
 			// action to perform if Yes is selected
-			frappe.show_alert({
-				message: "Deleteing Timesheet",
-				indicator: 'orange'
-			});
+			if(frm.doc.salary_slips_created){
+				frappe.show_alert({
+					message: "Cannot Delete Timesheet",
+					indicator: 'red'
+				});
+			}else{
+				frappe.show_alert({
+					message: "Deleteing Timesheet",
+					indicator: 'orange'
+				});
+			}
 			frappe.call({
 				method: "ets.docs.payroll.payroll_entry.delete_timesheet_backgroupjob",
 				args: {
@@ -112,7 +122,7 @@ frappe.ui.form.on('Payroll Entry', {
 				freeze: true,
 				freeze_message: __("Deleting Timesheet..."),
 				callback: function(r) {
-					frm.reload_doc();
+					// frm.reload_doc();
 				}
 			});
 		}, () => {
