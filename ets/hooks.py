@@ -33,7 +33,8 @@ app_include_css = "/assets/ets/css/ets.css"
 # include js in doctype views
 doctype_js = {
 	"Task" : "public/js/custom/doctype/project/task/task.js",
-	"Purchase Order" : "public/js/custom/doctype/buying/purchase_order.js"
+	"Purchase Order" : "public/js/custom/doctype/buying/purchase_order.js",
+	"Payroll Entry" : "public/js/custom/doctype/payroll/payroll_entry.js",
 	}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 doctype_tree_js = {"Task" : "public/js/custom/doctype/project/task/task_tree.js"}

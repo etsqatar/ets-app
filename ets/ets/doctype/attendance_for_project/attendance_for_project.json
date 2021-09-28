@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "creation": "2021-09-28 10:44:34.422052",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "project",
+  "weekday_ot_hr",
+  "weekend_ot_hr",
+  "holiday_ot_hr"
+ ],
+ "fields": [
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1
+  },
+  {
+   "fieldname": "weekday_ot_hr",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Weekday OT Hr",
+   "precision": "2"
+  },
+  {
+   "fieldname": "weekend_ot_hr",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Weekend OT Hr",
+   "precision": "2"
+  },
+  {
+   "fieldname": "holiday_ot_hr",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Holiday OT Hr",
+   "precision": "2"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2021-09-28 10:48:02.742564",
+ "modified_by": "Administrator",
+ "module": "Ets",
+ "name": "Attendance For Project",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
