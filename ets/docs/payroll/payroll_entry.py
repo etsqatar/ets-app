@@ -98,6 +98,7 @@ def process_timesheet(doc):
 
                     doc_dict = {
                         'doctype': 'Attendance',
+                        # TODO
                         # 'employee': emp_id,
                         'employee': 'ST-8031',
                         'attendance_date': attendance_date,
