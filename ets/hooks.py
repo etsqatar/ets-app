@@ -33,6 +33,7 @@ app_include_css = "/assets/ets/css/ets.css"
 # include js in doctype views
 doctype_js = {
 	"Task" : "public/js/custom/doctype/project/task/task.js",
+	"Project" : "public/js/custom/doctype/project/project.js",
 	"Purchase Order" : "public/js/custom/doctype/buying/purchase_order.js",
 	"Payroll Entry" : "public/js/custom/doctype/payroll/payroll_entry.js",
 	}
@@ -108,6 +109,13 @@ doc_events = {
     },
 	"Salary Slip": {
         "validate": "ets.docs.payroll.salary_slip.validate",
+    },
+	"Project": {
+        "validate": "ets.docs.project.project.validate",
+    },
+	"Task": {
+        "validate": "ets.docs.project.task.task.validate",
+        "on_update": "ets.docs.project.task.task.on_update",
     },
 }
 

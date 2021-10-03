@@ -1,13 +1,15 @@
 // return placeholder text if link_field value is falsy
 let text_to_show = value => {
-	return value ? value : '-';
+	return value ? `&nbsp-&nbsp<b>${value}</b>` : '';
 };
 
 // this function will be called from the Form's onload/onrefresh 
 // to fetch the value from the DB and render the Link field title initially
 let init_field_title = (frm, link_field_name) => {
-	if (!frm.fields_dict[link_field_name].value)
+	if (!frm.fields_dict[link_field_name].value){
+		render_field_title(frm, link_field_name, text_to_show())
 		return;
+	}
 	frappe.db.get_doc(
 		frm.fields_dict[link_field_name].df.options,
 		frm.fields_dict[link_field_name].value
@@ -19,12 +21,24 @@ let init_field_title = (frm, link_field_name) => {
 // the render function itself, just to be DRY
 let render_field_title = (frm, title, text) => {
 	let field = frm.fields_dict[title];
-	field.label_span.innerHTML = `${__(field._label)}&nbsp-&nbsp<b>${text}</b>`;
+	field.label_span.innerHTML = `${__(field._label)}${text}`;
 };
 
 frappe.ui.form.on('Task', {
 	refresh: frm => {
 		init_field_title(frm, 'parent_task');
+	},
+	after_save: function (frm) {
+		frappe.call({
+			method:
+				"ets.docs.project.task.task.after_save",
+			args: {
+				doc: frm.doc,
+			},
+			callback: (response) => {
+				frm.reload_doc();
+			},
+		});
 	},
 
 	// update the link field title on the selection change

@@ -5,15 +5,15 @@ import ets
 from ets.utils import ets_logger
 
 def validate(doc,method):
-    doc.get_emp_and_working_day_details()
-    get_emp_ots(doc)
-    add_ot_to_earnings(doc)
-    add_deduction(doc)
-    doc.calculate_net_pay()
-    doc.compute_year_to_date()
-    doc.compute_month_to_date()
-    doc.compute_component_wise_year_to_date()
-    doc.add_leave_balances()
+    # doc.get_emp_and_working_day_details()
+    # get_emp_ots(doc)
+    # add_ot_to_earnings(doc)
+    # add_deduction(doc)
+    # doc.calculate_net_pay()
+    # doc.compute_year_to_date()
+    # doc.compute_month_to_date()
+    # doc.compute_component_wise_year_to_date()
+    # doc.add_leave_balances()
     ets_logger.debug(doc.earnings)
 
 
@@ -28,9 +28,9 @@ def get_emp_ots(doc):
             ''', values=(doc.employee, doc.start_date, doc.end_date), as_dict=1)
     ets_logger.debug(attendances_ot)
     if attendances_ot:
-        doc.weekday_ot = attendances_ot[0].weekday_ot_hr
-        doc.weekend_ot = attendances_ot[0].weekend_ot_hr
-        doc.holiday_ot = attendances_ot[0].holiday_ot_hr
+        doc.weekday_ot = attendances_ot[0].weekday_ot_hr if attendances_ot[0].weekday_ot_hr else 0
+        doc.weekend_ot = attendances_ot[0].weekend_ot_hr if attendances_ot[0].weekend_ot_hr else 0
+        doc.holiday_ot = attendances_ot[0].holiday_ot_hr if attendances_ot[0].holiday_ot_hr else 0
 
 def add_ot_to_earnings(doc):
     
