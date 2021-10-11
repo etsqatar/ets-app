@@ -33,7 +33,7 @@ frappe.ui.form.on('Task', {
 			method:
 				"ets.docs.project.task.task.after_save",
 			args: {
-				doc: frm.doc,
+				doc: frm.doc.name,
 			},
 			callback: (response) => {
 				frm.reload_doc();

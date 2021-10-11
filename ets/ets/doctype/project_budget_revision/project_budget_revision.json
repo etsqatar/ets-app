@@ -1,0 +1,218 @@
+{
+ "actions": [],
+ "autoname": "format:{project}-REV-{YYYY}-{####}",
+ "creation": "2021-10-11 17:54:17.820040",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "project",
+  "project_phase",
+  "project_task",
+  "section_break_5",
+  "actual_project_contract_value",
+  "column_break_8",
+  "previous_revised_project_contract_value",
+  "column_break_10",
+  "revised_project_contract_value",
+  "section_break_12",
+  "actual_task_budget",
+  "revised_amount",
+  "column_break_14",
+  "previous_revised_task_budget",
+  "available_task_budget",
+  "column_break_17",
+  "revised_task_budget",
+  "section_break_17",
+  "reason",
+  "previous_revisions",
+  "amended_from",
+  "section_break_23",
+  "approval_log",
+  "rejection_log"
+ ],
+ "fields": [
+  {
+   "default": "PRO-REV-.YYYY.-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "naming_series"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1
+  },
+  {
+   "fieldname": "project_phase",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_standard_filter": 1,
+   "label": "Project Phase",
+   "options": "Task",
+   "reqd": 1
+  },
+  {
+   "fieldname": "project_task",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Project Task",
+   "options": "Task",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actual_task_budget",
+   "fieldtype": "Currency",
+   "label": "Actual Task Budget",
+   "read_only": 1
+  },
+  {
+   "fieldname": "revised_task_budget",
+   "fieldtype": "Currency",
+   "label": "Revised Task Budget",
+   "read_only": 1
+  },
+  {
+   "fieldname": "revised_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Revision Amount",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Project Budget Revision",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "label": "Reason",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actual_project_contract_value",
+   "fieldtype": "Currency",
+   "label": "Actual Project Contract Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "revised_project_contract_value",
+   "fieldtype": "Currency",
+   "label": "Revised Project Contract Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_revised_task_budget",
+   "fieldtype": "Currency",
+   "label": "Previous Revised Task Budget",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_revised_project_contract_value",
+   "fieldtype": "Currency",
+   "label": "Previous Revised Project Contract Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_revisions",
+   "fieldtype": "Table",
+   "label": "Previous Revisions",
+   "no_copy": 1,
+   "options": "Project Contract",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_5",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_17",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "available_task_budget",
+   "fieldtype": "Currency",
+   "label": "Available Task budget",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_23",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "rejection_log",
+   "fieldtype": "Table",
+   "label": "Rejection Log",
+   "options": "Rejection Log",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approval_log",
+   "fieldtype": "Table",
+   "label": "Approval Log",
+   "options": "Approval Log",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2021-10-11 20:02:06.954722",
+ "modified_by": "Administrator",
+ "module": "Ets",
+ "name": "Project Budget Revision",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

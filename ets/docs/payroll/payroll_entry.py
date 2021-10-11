@@ -21,7 +21,7 @@ def process_timesheet(doc):
     # ]
 
     payrollEntry = frappe.get_doc("Payroll Entry",doc)
-    
+    payrollEntry.error_log = None
     # payrollEntry.is_timesheet_processing = True
     # payrollEntry.flags.ignore_permissions = True
     # payrollEntry.save()
@@ -51,18 +51,32 @@ def process_timesheet(doc):
             emp_Ot = d[1][4:4+31] # Employee OT
             emp_attendence = d[2][4:4+31] # Attendance
             emp_project = d[3][4:4+31] # Project
-            ets_logger.debug(emp_id)
             emp = frappe.get_value('Employee', emp_id, 'name')
             company = frappe.get_value('Employee', emp_id, 'company')
-            emp = True
+            # emp = True
             if emp:
+                # ets_logger.debug(emp_id)
+                payrollEntry.append('employees', {"employee" : emp_id})
                 for day in range(0,31):
-                    # ets_logger.debug(day)
+                    # ets_logger.debug(f"{day} - {emp_attendence[day]}")
                     status = 'Present'
-                    if emp_attendence[day] is None:
+                    leave_type = None
+                    # if emp_attendence[day] is None or emp_attendence[day] == 'A' or emp_attendence[day] == 'M' or emp_attendence[day] == 'V' or emp_attendence[day] == 'PL':
+                    if emp_attendence[day] is None or emp_attendence[day] == 'A':
                         status = 'Absent'
-                    elif emp_attendence[day] == 'M' or emp_attendence[day] == 'V' or emp_attendence[day] == 'PL': # Medical Leave | Vacation | Paid Leave
+                        leave_type = 'Leave Without Pay'
+                    elif emp_attendence[day] == 'M':
                         status = 'On Leave'
+                        leave_type = 'Sick Leave'
+                    elif emp_attendence[day] == 'M':
+                        status = 'On Leave'
+                        leave_type = 'Sick Leave'
+                    elif emp_attendence[day] == 'V':
+                        status = 'On Leave'
+                        leave_type = 'Annual Leave'
+                    elif emp_attendence[day] == 'PL':
+                        status = 'On Leave'
+                        leave_type = 'Casual Leave'
                     if emp_attendence[day] == 'T' or  emp_attendence[day] == 'X':  # Transfered to another site
                         continue
                     attendance_date = add_days(payrollEntry.start_date,day)
@@ -99,10 +113,11 @@ def process_timesheet(doc):
                     doc_dict = {
                         'doctype': 'Attendance',
                         # TODO
-                        # 'employee': emp_id,
-                        'employee': 'ST-8031',
+                        'employee': emp_id,
+                        # 'employee': 'ST-8031',
                         'attendance_date': attendance_date,
                         'status': status,
+                        'leave_type': leave_type,
                         'company': company,
                         'payroll_entry': payrollEntry.name,
                         'weekday_ot_hr': weekday_ot,
@@ -141,6 +156,7 @@ def process_timesheet(doc):
                             )
                         # traceback = frappe.get_traceback()
                         # ets_logger.debug(e)
+                        payrollEntry.append('error_log', {"error" : e})
                         # ets_logger.debug(traceback)
                         # ets_logger.debug(emp_id)
                         # ets_logger.debug(traceback.message)
@@ -151,6 +167,8 @@ def process_timesheet(doc):
                     # payrollEntry.save()
                     # frappe.db.commit()
                 pass
+            else:
+                payrollEntry.append('error_log', {"error" : f"Employee - {emp_id} not found in the system"})
             count += 1
             pass
     frappe.publish_realtime(

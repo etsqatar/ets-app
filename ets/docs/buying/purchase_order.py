@@ -12,11 +12,22 @@ def validate(doc,method):
 	pass
 
 def on_update(doc,state):
-	# ets_logger.debug(f"{doc} - {state}")
+	ets_logger.debug(f"{doc} - {state}")
 	# ets_logger.debug(doc.items)
 	# for item in doc.items:
 	# 	pass
 	pass
+
+@frappe.whitelist()
+def validate_task_budget(doc):
+	po = frappe.get_doc("Purchase Order",doc)
+	project_task = frappe.get_doc("Task",po.set_project_task)
+
+	if po.grand_total > project_task.available_budget:
+		# frappe.throw("Budget not avaliable to proceed")
+		frappe.response["budget_aval"] = False
+		frappe.response["mgs"] = "Budget not avaliable to proceed"
+	else: frappe.response["budget_aval"] = True
 
 # def process_workflow_actions(doc, state):
 # 	workflow = get_workflow_name(doc.get('doctype'))

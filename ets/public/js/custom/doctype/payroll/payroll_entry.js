@@ -69,7 +69,7 @@ frappe.ui.form.on('Payroll Entry', {
 				let message;
 				if (data.success) {
 					let message_args = [data.tittle,data.current, data.total];
-					message =__('{0} - Importing {1} of {2}', message_args);
+					message =__('{0} -  {1} of {2}', message_args);
 				}
 				if (data.skipping) {
 					message = __('{0} - Skipping {1} of {2} {3}', [

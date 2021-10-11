@@ -1,5 +1,5 @@
 let text_to_show = value => {
-	return value ? value : '';
+	return value ? `&nbsp-&nbsp<b>${value}</b>` : '';
 };
 
 let init_field_task_title = (frm, link_field_name) => {
@@ -15,7 +15,8 @@ let init_field_task_title = (frm, link_field_name) => {
 
 let render_field_title = (frm, title, text) => {
 	let field = frm.fields_dict[title];
-	field.label_span.innerHTML = `${__(field._label)}&nbsp-&nbsp<b>${text}</b>`;
+	// field.label_span.innerHTML = `${__(field._label)}&nbsp-&nbsp<b>${text}</b>`;
+	field.label_span.innerHTML = `${__(field._label)}${text}`;
 };
 
 let autofill_project = (child_table, project_field, project) => {
@@ -49,6 +50,28 @@ frappe.ui.form.on('Purchase Order', {
 		// frappe.throw(
 			if(me.frm.selected_workflow_action == "Reject"){
 				reject_items({frm: me.frm});
+			}else if(me.frm.selected_workflow_action == "Proceed Approval"){
+				console.log("Proceed Approva");
+				frappe.call({
+					method: "ets.docs.buying.purchase_order.validate_task_budget",
+					args: { "doc": me.frm.doc.name},
+					freeze: true,
+					callback: function (r) {
+						console.log(r);
+						if(r.budget_aval){
+							frappe.xcall('frappe.model.workflow.apply_workflow',
+								{doc: me.frm.doc, action: me.frm.selected_workflow_action})
+								.then((doc) => {
+									frappe.model.sync(doc);
+									me.frm.refresh();
+									me.frm.selected_workflow_action = null;
+									me.frm.script_manager.trigger("after_workflow_action");
+								});
+						}else{
+							frappe.msgprint(r.mgs);
+						}
+					}
+				});		
 			}else{
 				approve_items({
 					frm: me.frm,
@@ -255,20 +278,33 @@ let approve_items = (opts) => {
 				console.log(cur_dialog);
 				console.log(cur_dialog.get_values());
 				console.log(frm.selected_workflow_action)
-				
-				frappe.xcall('frappe.model.workflow.apply_workflow',
-					{doc: frm.doc, action: frm.selected_workflow_action})
-					.then((doc) => {
-						dialog.hide();
-						frappe.model.sync(doc);
-						frm.refresh();
-						frm.selected_workflow_action = null;
-						frm.script_manager.trigger("after_workflow_action");
-						
-					});
+	
+				frappe.call({
+					method: "ets.docs.buying.purchase_order.validate_task_budget",
+					args: { "doc": frm.doc.name},
+					freeze: true,
+					callback: function (r) {
+						console.log(r);
+						if(r.budget_aval){
+							frappe.xcall('frappe.model.workflow.apply_workflow',
+								{doc: frm.doc, action: frm.selected_workflow_action})
+								.then((doc) => {
+									dialog.hide();
+									frappe.model.sync(doc);
+									frm.refresh();
+									frm.selected_workflow_action = null;
+									frm.script_manager.trigger("after_workflow_action");
+									
+								});
+						}else{
+							dialog.hide();
+							frappe.msgprint(r.mgs);
+						}
+					}
+				})
 			},
-			secondary_action: function (e) {
-				console.log(e);
+			secondary_action: function () {
+				// console.log(e);
 			},
 
 			primary_action_label: __('Approve'),

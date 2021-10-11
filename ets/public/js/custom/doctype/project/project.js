@@ -2,6 +2,34 @@ frappe.ui.form.on('Project', {
 	refresh: frm => {
 		
 	},
+
+	import_budget: function (frm) {
+		frappe.call({
+			method: "ets.docs.project.project.import_project_budget",
+			args: { "doc": frm.doc},
+			freeze: true,
+			callback: function (r) {
+				frm.reload_doc();
+				// console.log(r)
+				// frappe.model.set_value(cdt, cdn, "revised_contract_value", r.revised_contract_value);
+				// frm.set_value("revised_contract_value", r.revised_contract_value);
+			}
+		});			
+	},
+
+	delete_budget: function (frm) {
+		frappe.call({
+			method: "ets.docs.project.project.delete_project_budget",
+			args: { "doc": frm.doc.name},
+			freeze: true,
+			callback: function (r) {
+				frm.reload_doc();
+				// console.log(r)
+				// frappe.model.set_value(cdt, cdn, "revised_contract_value", r.revised_contract_value);
+				// frm.set_value("revised_contract_value", r.revised_contract_value);
+			}
+		});			
+	}
 });
 
 

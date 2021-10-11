@@ -1,12 +1,20 @@
 from __future__ import unicode_literals
 import frappe
+from frappe.model import document
 from frappe.utils.data import flt
 from ets.utils import ets_logger, get_conditions
 import ast
 
 def validate(doc,method):
+	if len(doc.contract_revisions) > 0:
+		doc.revised_contract_value = doc.contract_revisions[-1].revised_contract_value
+		doc.budget = doc.revised_contract_value
+	else:
+		doc.revised_contract_value = 0
+
 	if doc.committed_cost and doc.budget:
 		doc.available_budget = flt(flt(doc.budget) - flt(doc.committed_cost))
+		
 	pass
 
 def on_update(doc,method):
@@ -20,11 +28,8 @@ def on_update(doc,method):
 
 @frappe.whitelist()
 def after_save(doc):
-	ets_logger.debug(doc)
-	if isinstance(doc, str):
-		doc = ast.literal_eval(doc)
-		doc = frappe._dict(doc)
-	if not doc.is_group:
+	doc = frappe.get_doc("Task" , doc)
+	if not doc.is_group and doc.parent_task:
 		parent_doc = frappe.get_doc("Task",{'project':doc.project, 'is_group': 1, 'name' : doc.parent_task})
 		parent_doc.committed_cost, parent_doc.incurred_cost, parent_doc.utilized_cost, parent_doc.budget = \
 			frappe.get_value("Task",{'project':doc.project, 'is_group': 0, 'parent_task' : doc.parent_task},\
