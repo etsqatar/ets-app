@@ -55,7 +55,7 @@ frappe.ui.form.on('Purchase Order', {
 				frappe.call({
 					method: "ets.docs.buying.purchase_order.validate_task_budget",
 					args: { "doc": me.frm.doc.name},
-					freeze: true,
+					// freeze: true,
 					callback: function (r) {
 						console.log(r);
 						if(r.budget_aval){

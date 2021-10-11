@@ -1,29 +1,29 @@
-// Copyright (c) 2021, oryxerp.qa and contributors
-// For license information, please see license.txt
-
-frappe.ui.form.on('Project Budget Revision', {
-	refresh: function(frm) {
-		init_field_title(frm, 'project_phase');
-		init_field_title(frm, 'project_task');
-		cur_frm.fields_dict.project_phase.get_query = function(doc) {
+frappe.ui.form.on('Material Request', {
+	refresh: frm => {
+		init_field_title(frm, 'set_project_task_group');
+		init_field_title(frm, 'set_project_task');
+        autofill_project(frm.doc.items,'project',frm.doc.set_project);
+		autofill_project(frm.doc.items,'task',frm.doc.set_project_task);
+        cur_frm.fields_dict.set_project_task_group.get_query = function(doc) {
 			return {
 				filters: [
-					["project", "=", doc.project],
+					["project", "=", doc.set_project],
 					["is_group", "=",1]
 				]
 			}
 		};
-		cur_frm.fields_dict.project_task.get_query = function(doc) {
+		cur_frm.fields_dict.set_project_task.get_query = function(doc) {
 			return {
 				filters: [
-					["project", "=", doc.project],
+					["project", "=", doc.set_project],
 					["is_group", "=",0],
-					["parent_task", "=",doc.project_phase]
+					["parent_task", "=",doc.set_project_task_group]
 				]
 			}
 		};
 	},
-	before_workflow_action: () => {
+
+    before_workflow_action: () => {
 		console.log(me.frm.selected_workflow_action);
 		// frappe.throw(
 			if(me.frm.selected_workflow_action == "Reject"){
@@ -43,12 +43,11 @@ frappe.ui.form.on('Project Budget Revision', {
 
 		throw new Error("Manually Stop of workflow");
 	}
+    
 });
-
 
 let reject_ = (opts) => {
 	const frm = opts.frm;
-	// console.log(frm);
 	const dialog = new frappe.ui.Dialog({
 		title: __('Please provide reason for rejection'),
 		fields: [
@@ -121,7 +120,23 @@ let approve_ = (opts) => {
 	dialog.show();
 }
 
+let autofill_project = (child_table, project_field, project) => {
+	if (project && child_table && child_table.length) {
+		let doctype = child_table[0].doctype;
+		$.each(child_table || [], function(i, item) {
+			frappe.model.set_value(doctype, item.name, project_field, project);
+		});
+	}
+};
 
+let autofill_task = (child_table, task_field, task) => {
+	if (task && child_table && child_table.length) {
+		let doctype = child_table[0].doctype;
+		$.each(child_table || [], function(i, item) {
+			frappe.model.set_value(doctype, item.name, task_field, task);
+		});
+	}
+};
 
 let text_to_show = value => {
 	return value ? `&nbsp-&nbsp<b>${value}</b>` : '';

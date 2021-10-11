@@ -36,8 +36,9 @@ doctype_js = {
 	"Project" : "public/js/custom/doctype/project/project.js",
 	"Purchase Order" : "public/js/custom/doctype/buying/purchase_order.js",
 	"Payroll Entry" : "public/js/custom/doctype/payroll/payroll_entry.js",
+	"Material Request" : "public/js/custom/doctype/stock/material_request.js",
 	}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_list_js = {"Purchase Order" : "public/js/custom/doctype/buying/purchase_order_list.js" ,}
 doctype_tree_js = {"Task" : "public/js/custom/doctype/project/task/task_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -104,8 +105,10 @@ doctype_tree_js = {"Task" : "public/js/custom/doctype/project/task/task_tree.js"
 
 doc_events = {
 	"Purchase Order": {
-        "validate": "ets.ets.doctype.buying.purchase_order.validate",
-        "on_update": "ets.ets.doctype.buying.purchase_order.on_update",
+        "validate": "ets.docs.buying.purchase_order.validate",
+        "on_update": "ets.docs.buying.purchase_order.on_update",
+        "on_submit": "ets.docs.buying.purchase_order.on_submit",
+        "on_cancel": "ets.docs.buying.purchase_order.on_cancel",
     },
 	"Salary Slip": {
         "validate": "ets.docs.payroll.salary_slip.validate",

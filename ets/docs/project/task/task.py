@@ -2,8 +2,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe.model import document
 from frappe.utils.data import flt
-from ets.utils import ets_logger, get_conditions
-import ast
+from ets.utils import ets_logger
 
 def validate(doc,method):
 	if len(doc.contract_revisions) > 0:
@@ -28,12 +27,13 @@ def on_update(doc,method):
 
 @frappe.whitelist()
 def after_save(doc):
+	ets_logger.debug("task after_save")
 	doc = frappe.get_doc("Task" , doc)
 	if not doc.is_group and doc.parent_task:
 		parent_doc = frappe.get_doc("Task",{'project':doc.project, 'is_group': 1, 'name' : doc.parent_task})
-		parent_doc.committed_cost, parent_doc.incurred_cost, parent_doc.utilized_cost, parent_doc.budget = \
+		parent_doc.committed_cost, parent_doc.incurred_cost, parent_doc.utilized_cost, parent_doc.available_budget = \
 			frappe.get_value("Task",{'project':doc.project, 'is_group': 0, 'parent_task' : doc.parent_task},\
-				["sum(committed_cost) as committed_cost","sum(incurred_cost) as incurred_cost", "sum(utilized_cost) as utilized_cost","sum(budget) as budget"])
+				["sum(committed_cost) as committed_cost","sum(incurred_cost) as incurred_cost", "sum(utilized_cost) as utilized_cost","sum(available_budget) as available_budget"])
 		parent_doc.save()
 
 	# project_doc = frappe.get_doc("Project",doc.project)
@@ -43,6 +43,18 @@ def after_save(doc):
 	# project_doc.available_budget = flt(flt(project_doc.estimated_costing) - flt(project_doc.committed_cost))
 	# project_doc.save()
 	pass
+
+# @frappe.whitelist()
+# def task_after_save(doc):
+# 	ets_logger.debug("task after_save")
+# 	doc = frappe.get_doc("Task" , doc)
+# 	if not doc.is_group and doc.parent_task:
+# 		parent_doc = frappe.get_doc("Task",{'project':doc.project, 'is_group': 1, 'name' : doc.parent_task})
+# 		parent_doc.committed_cost, parent_doc.incurred_cost, parent_doc.utilized_cost, parent_doc.budget = \
+# 			frappe.get_value("Task",{'project':doc.project, 'is_group': 0, 'parent_task' : doc.parent_task},\
+# 				["sum(committed_cost) as committed_cost","sum(incurred_cost) as incurred_cost", "sum(utilized_cost) as utilized_cost","sum(budget) as budget"])
+# 		parent_doc.save()
+# 	pass
 
 
 @frappe.whitelist()

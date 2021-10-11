@@ -20,7 +20,7 @@ def validate(doc,method):
 	else:
 		doc.revised_contract_value = 0
 		
-	if doc.committed_cost and doc.budget:
+	if doc.committed_cost and doc.estimated_costing:
 		doc.available_budget = flt(flt(doc.estimated_costing) - flt(doc.committed_cost))
 	pass
 

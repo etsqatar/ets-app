@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _, throw
-from ets.utils import ets_logger
+from ets.utils import update_budjet_cost
 
 
 def validate(doc,method):
@@ -12,10 +12,18 @@ def validate(doc,method):
 	pass
 
 def on_update(doc,state):
-	ets_logger.debug(f"{doc} - {state}")
+	# ets_logger.debug(f"{doc} - {state}")
 	# ets_logger.debug(doc.items)
 	# for item in doc.items:
 	# 	pass
+	pass
+
+def on_submit(doc,method):
+	update_budjet_cost(dt="Purchase Order", dn=doc.name, task_name = doc.set_project_task, amount = doc.grand_total, update_on = "committed", comment=None)
+	pass
+
+def on_cancel(doc,method):
+	update_budjet_cost(dt="Purchase Order", dn=doc.name, task_name = doc.set_project_task, amount = -doc.grand_total, update_on = "committed", comment=None)
 	pass
 
 @frappe.whitelist()

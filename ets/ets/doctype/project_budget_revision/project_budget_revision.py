@@ -45,6 +45,9 @@ class ProjectBudgetRevision(Document):
 
 	def on_submit(self):
 		self.update_budget()
+	
+	def on_cancel(self):
+		self.update_budget_on_cancel()
 
 	def update_budget(self):
 		project = frappe.get_doc("Project", self.project)
@@ -53,6 +56,20 @@ class ProjectBudgetRevision(Document):
 		project_contract = {
             "revised_amount": self.revised_amount,
             "revised_contract_value": self.revised_task_budget,
+            "task": self.project_task,
+            }
+		project.append('contract_revisions', project_contract)
+		project.save()
+		task.append('contract_revisions', project_contract)
+		task.save()
+
+	def update_budget_on_cancel(self):
+		project = frappe.get_doc("Project", self.project)
+		task = frappe.get_doc("Task", self.project_task)
+
+		project_contract = {
+            "revised_amount": -flt(self.revised_amount),
+            "revised_contract_value": flt(flt(task.revised_contract_value) - flt(self.revised_amount)),
             "task": self.project_task,
             }
 		project.append('contract_revisions', project_contract)
