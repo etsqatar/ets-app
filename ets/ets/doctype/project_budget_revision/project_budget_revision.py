@@ -6,6 +6,8 @@ from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
 from frappe.utils.data import flt
+from ets.docs.project.project import get_project_revised_contract_value
+from ets.docs.project.task.task import task_after_save
 from ets.utils import ets_logger
 
 
@@ -18,7 +20,6 @@ class ProjectBudgetRevision(Document):
 		self.previous_revised_project_contract_value = project.revised_contract_value
 		self.actual_task_budget = task.actual_contract_value
 		self.previous_revised_task_budget = task.revised_contract_value
-		self.available_task_budget = task.available_budget
 		self.previous_revisions = None
 		for revision in task.contract_revisions:
 			project_contract = {
@@ -42,6 +43,8 @@ class ProjectBudgetRevision(Document):
 				self.revised_task_budget = flt(flt(self.previous_revised_task_budget) + flt(self.revised_amount))
 			else:
 				self.revised_task_budget = flt(flt(self.actual_task_budget) + flt(self.revised_amount))
+		
+		self.available_task_budget = self.revised_task_budget - task.committed_cost
 
 	def on_submit(self):
 		self.update_budget()
@@ -55,13 +58,19 @@ class ProjectBudgetRevision(Document):
 
 		project_contract = {
             "revised_amount": self.revised_amount,
-            "revised_contract_value": self.revised_task_budget,
+            "revised_contract_value": get_project_revised_contract_value(self.revised_amount,project.actual_contract_value,project.revised_contract_value),
             "task": self.project_task,
             }
 		project.append('contract_revisions', project_contract)
 		project.save()
-		task.append('contract_revisions', project_contract)
+		task_contract = {
+            "revised_amount": self.revised_amount,
+            "revised_contract_value": self.revised_task_budget,
+            "task": self.project_task,
+            }
+		task.append('contract_revisions', task_contract)
 		task.save()
+		task_after_save(self.project_task)
 
 	def update_budget_on_cancel(self):
 		project = frappe.get_doc("Project", self.project)
@@ -69,12 +78,19 @@ class ProjectBudgetRevision(Document):
 
 		project_contract = {
             "revised_amount": -flt(self.revised_amount),
-            "revised_contract_value": flt(flt(task.revised_contract_value) - flt(self.revised_amount)),
+            "revised_contract_value": get_project_revised_contract_value(-self.revised_amount,project.actual_contract_value,project.revised_contract_value),
             "task": self.project_task,
             }
 		project.append('contract_revisions', project_contract)
 		project.save()
-		task.append('contract_revisions', project_contract)
+
+		task_contract = {
+            "revised_amount": -flt(self.revised_amount),
+            "revised_contract_value": flt(flt(task.revised_contract_value) - flt(self.revised_amount)),
+            "task": self.project_task,
+            }
+		task.append('contract_revisions', task_contract)
 		task.save()
-			
+		task_after_save(self.project_task)
+
 		

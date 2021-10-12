@@ -17,8 +17,8 @@ def validate(doc,method):
 	if len(doc.contract_revisions) > 0:
 		doc.revised_contract_value = doc.contract_revisions[-1].revised_contract_value
 		doc.estimated_costing = doc.revised_contract_value
-	else:
-		doc.revised_contract_value = 0
+	# else:
+	# 	doc.revised_contract_value = 0
 		
 	if doc.committed_cost and doc.estimated_costing:
 		doc.available_budget = flt(flt(doc.estimated_costing) - flt(doc.committed_cost))
@@ -31,7 +31,7 @@ def get_project_revised_contract_value(revised_amount = None,actual_contract_val
 	else:
 		revised_contract_value = flt(flt(actual_contract_value) + flt(revised_amount))
 	frappe.response["revised_contract_value"] = revised_contract_value
-	pass
+	return revised_contract_value
 
 @frappe.whitelist()
 def import_project_budget(doc):

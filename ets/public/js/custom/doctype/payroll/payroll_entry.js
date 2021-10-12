@@ -39,7 +39,17 @@ frappe.ui.form.on('Payroll Entry', {
 					}
 				});
 			});
-		}
+		};
+		init_field_title(frm, 'project');
+		init_field_title(frm, 'task');
+		cur_frm.fields_dict.task.get_query = function(doc) {
+			return {
+				filters: [
+					["project", "=", doc.project],
+					["is_group", "=",0],
+				]
+			}
+		};
 	},
 	setup(frm) {
 		// frappe.realtime.on('data_import_refresh', ({ data_import }) => {
@@ -133,10 +143,24 @@ frappe.ui.form.on('Payroll Entry', {
 });
 
 
-// let render_employee_attendance = function (frm, data) {
-// 	frm.fields_dict.attendance_detail_html.html(
-// 		frappe.render_template('employees_to_mark_attendance', {
-// 			data: data
-// 		})
-// 	);
-// };
+let text_to_show = value => {
+	return value ? `&nbsp-&nbsp<b>${value}</b>` : '';
+};
+
+let init_field_title = (frm, link_field_name) => {
+	if (!frm.fields_dict[link_field_name].value){
+		render_field_title(frm, link_field_name, text_to_show())
+		return;
+	}
+	frappe.db.get_doc(
+		frm.fields_dict[link_field_name].df.options,
+		frm.fields_dict[link_field_name].value
+	).then(result => {
+		render_field_title(frm, link_field_name, text_to_show(result.subject));
+	});
+};
+
+let render_field_title = (frm, title, text) => {
+	let field = frm.fields_dict[title];
+	field.label_span.innerHTML = `${__(field._label)}${text}`;
+};

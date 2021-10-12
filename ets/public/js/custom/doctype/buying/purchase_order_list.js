@@ -43,8 +43,10 @@ frappe.listview_settings['Purchase Order'] = {
 					if (!colour) colour = "gray";
 		
 					// return [__(val), colour, workflow_fieldname + ',=,' + val];
-
-					return `
+					// $li.find("i").attr("title", label).tooltip({ delay: { "show": 600, "hide": 100 }, trigger: "hover" });
+					 var ws = 
+					//  $(
+						 `
 						<div class="list-row-col hidden-xs ellipsis">
 							<span class="indicator-pill ${colour} filterable ellipsis" data-filter="${'workflow_state,=,' + val}">
 								<span class="ellipsis"> ${__(val)}</span>
@@ -52,6 +54,8 @@ frappe.listview_settings['Purchase Order'] = {
 							</span>
 						</div>
 					`;
+					// ).attr("title", val).tooltip({ delay: { "show": 600, "hide": 100 }, trigger: "hover" });
+					return ws;
 				}
         },
 	},

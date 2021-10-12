@@ -8,10 +8,10 @@ def validate(doc,method):
 	if len(doc.contract_revisions) > 0:
 		doc.revised_contract_value = doc.contract_revisions[-1].revised_contract_value
 		doc.budget = doc.revised_contract_value
-	else:
-		doc.revised_contract_value = 0
+	# else:
+	# 	doc.revised_contract_value = 0
 
-	if doc.committed_cost and doc.budget:
+	if doc.budget:
 		doc.available_budget = flt(flt(doc.budget) - flt(doc.committed_cost))
 		
 	pass
@@ -26,14 +26,15 @@ def on_update(doc,method):
 	pass
 
 @frappe.whitelist()
-def after_save(doc):
+def task_after_save(doc):
+	frappe.db.commit()
 	ets_logger.debug("task after_save")
 	doc = frappe.get_doc("Task" , doc)
 	if not doc.is_group and doc.parent_task:
 		parent_doc = frappe.get_doc("Task",{'project':doc.project, 'is_group': 1, 'name' : doc.parent_task})
-		parent_doc.committed_cost, parent_doc.incurred_cost, parent_doc.utilized_cost, parent_doc.available_budget = \
+		parent_doc.committed_cost, parent_doc.incurred_cost, parent_doc.utilized_cost, parent_doc.available_budget,parent_doc.budget, parent_doc.actual_contract_value, parent_doc.revised_contract_value = \
 			frappe.get_value("Task",{'project':doc.project, 'is_group': 0, 'parent_task' : doc.parent_task},\
-				["sum(committed_cost) as committed_cost","sum(incurred_cost) as incurred_cost", "sum(utilized_cost) as utilized_cost","sum(available_budget) as available_budget"])
+				["sum(committed_cost) as committed_cost","sum(incurred_cost) as incurred_cost", "sum(utilized_cost) as utilized_cost","sum(available_budget) as available_budget","sum(budget) as budget", "sum(actual_contract_value) as actual_contract_value", "sum(revised_contract_value) as revised_contract_value"])
 		parent_doc.save()
 
 	# project_doc = frappe.get_doc("Project",doc.project)

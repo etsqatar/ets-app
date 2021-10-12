@@ -31,7 +31,7 @@ frappe.ui.form.on('Task', {
 	after_save: function (frm) {
 		frappe.call({
 			method:
-				"ets.docs.project.task.task.after_save",
+				"ets.docs.project.task.task.task_after_save",
 			args: {
 				doc: frm.doc.name,
 			},

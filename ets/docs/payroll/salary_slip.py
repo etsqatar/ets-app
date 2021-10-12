@@ -62,47 +62,46 @@ def add_earnings_and_deduction(doc):
                 earning.amount = flt((doc.weekday_ot*payroll_setting.holiday_ot_rate)*(_basic.amount/doc.total_working_days/payroll_setting.working_hrs),2)
                 hasHolidayOT = True
                 continue
-
-
-        if doc.weekday_ot > 0 and not hasWeekdayOT:
+ 
+        if flt(doc.weekday_ot) > 0 and not hasWeekdayOT:
             wages_row = {
             "salary_component": "Weekday OT",
             "abbr": frappe.db.get_value("Salary Component", "Weekday OT", "salary_component_abbr"),
-            "amount": flt((doc.weekday_ot*payroll_setting.weekday_ot_rate)*(_basic.amount/doc.total_working_days/payroll_setting.working_hrs),2),
+            "amount": flt((flt(doc.weekday_ot)*flt(payroll_setting.weekday_ot_rate))*(flt(_basic.amount)/flt(doc.total_working_days)/flt(payroll_setting.working_hrs)),2),
             "default_amount": 0.0,
             "additional_amount": 0.0
             }
             doc.append('earnings', wages_row)
-        if doc.weekend_ot > 0 and not hasWeekendOT:
+        if flt(doc.weekend_ot) > 0 and not hasWeekendOT:
             wages_row = {
             "salary_component": "Weekend OT",
             "abbr": frappe.db.get_value("Salary Component", "Weekend OT", "salary_component_abbr"),
-            "amount": flt((doc.weekend_ot*payroll_setting.weekend_ot_rate)*(_basic.amount/doc.total_working_days/payroll_setting.working_hrs),2),
+            "amount": flt((flt(doc.weekend_ot)*flt(payroll_setting.weekend_ot_rate))*(flt(_basic.amount)/flt(doc.total_working_days)/flt(payroll_setting.working_hrs)),2),
             "default_amount": 0.0,
             "additional_amount": 0.0
             }
             doc.append('earnings', wages_row)
-        if doc.holiday_ot > 0 and not hasHolidayOT:
+        if flt(doc.holiday_ot) > 0 and not hasHolidayOT:
             wages_row = {
             "salary_component": "Holiday OT",
             "abbr": frappe.db.get_value("Salary Component", "Holiday OT", "salary_component_abbr"),
-            "amount": flt((doc.holiday_ot*payroll_setting.holiday_ot_rate)*(_basic.amount/doc.total_working_days/payroll_setting.working_hrs),2),
+            "amount": flt((flt(doc.holiday_ot)*flt(payroll_setting.holiday_ot_rate))*(flt(_basic.amount)/flt(doc.total_working_days)/flt(payroll_setting.working_hrs)),2),
             "default_amount": 0.0,
             "additional_amount": 0.0
             }
             doc.append('earnings', wages_row)
     
     def add_deduction(doc):
-        if doc.absent_days > 0:
+        if flt(doc.absent_days) > 0:
             for deduction in doc.deductions:
                 if deduction.salary_component == "Absent":
-                    deduction.amount = flt(flt(doc.absent_days)*flt(salary_structure.total_earning/doc.total_working_days),2)
+                    deduction.amount = flt(flt(doc.absent_days)*flt(flt(salary_structure.total_earning)/flt(doc.total_working_days)),2)
                     return
             
             wages_row = {
                 "salary_component": "Absent",
                 "abbr": frappe.db.get_value("Salary Component", "Absent", "salary_component_abbr"),
-                "amount": flt(flt(doc.absent_days)*flt(salary_structure.total_earning/doc.total_working_days),2),
+                "amount": flt(flt(doc.absent_days)*flt(flt(salary_structure.total_earning)/flt(doc.total_working_days)),2),
                 "default_amount": 0.0,
                 "additional_amount": 0.0
                 }
