@@ -57,7 +57,7 @@ def create_salary_information_file(company):
 	sif = frappe.new_doc("Salary Information File")
 	sif.company = company
 	date = frappe.utils.get_datetime()
-	sif.month =
+	sif.month = date.month
 	sif.year = date.year
 
 def set_data_for_employee(employee, country):
