@@ -37,6 +37,9 @@ doctype_js = {
 	"Purchase Order" : "public/js/custom/doctype/buying/purchase_order.js",
 	"Payroll Entry" : "public/js/custom/doctype/payroll/payroll_entry.js",
 	"Material Request" : "public/js/custom/doctype/stock/material_request.js",
+	"Purchase Receipt" : "public/js/custom/doctype/stock/purchase_receipt.js",
+	"Stock Entry" : "public/js/custom/doctype/stock/stock_entry.js",
+	"Purchase Invoice" : "public/js/custom/doctype/accounting/purchase_invoice.js",
 	}
 doctype_list_js = {"Purchase Order" : "public/js/custom/doctype/buying/purchase_order_list.js" ,}
 doctype_tree_js = {"Task" : "public/js/custom/doctype/project/task/task_tree.js"}
@@ -110,6 +113,24 @@ doc_events = {
         "on_submit": "ets.docs.buying.purchase_order.on_submit",
         "on_cancel": "ets.docs.buying.purchase_order.on_cancel",
     },
+	"Purchase Receipt": {
+        "validate": "ets.docs.stock.purchase_receipt.validate",
+        "on_update": "ets.docs.stock.purchase_receipt.on_update",
+        "on_submit": "ets.docs.stock.purchase_receipt.on_submit",
+        "on_cancel": "ets.docs.stock.purchase_receipt.on_cancel",
+    },
+	"Stock Entry": {
+        "validate": "ets.docs.stock.stock_entry.validate",
+        "on_update": "ets.docs.stock.stock_entry.on_update",
+        "on_submit": "ets.docs.stock.stock_entry.on_submit",
+        "on_cancel": "ets.docs.stock.stock_entry.on_cancel",
+    },
+	"Purchase Invoice": {
+        "validate": "ets.docs.accounting.purchase_invoice.validate",
+        "on_update": "ets.docs.accounting.purchase_invoice.on_update",
+        "on_submit": "ets.docs.accounting.purchase_invoice.on_submit",
+        "on_cancel": "ets.docs.accounting.purchase_invoice.on_cancel",
+    },
 	"Salary Slip": {
         "validate": "ets.docs.payroll.salary_slip.validate",
     },
@@ -120,6 +141,10 @@ doc_events = {
         "validate": "ets.docs.project.task.task.validate",
         "on_update": "ets.docs.project.task.task.on_update",
     },
+	"Salary Information File": {
+		"validate": "ets.ets.qatar.utils.validate_payer_details",
+		"after_insert": ["ets.ets.qatar.utils.validate_bank_details_and_generate_csv"]
+	},
 }
 
 # Scheduled Tasks

@@ -19,11 +19,11 @@ def on_update(doc,state):
 	pass
 
 def on_submit(doc,method):
-	update_budjet_cost(dt="Purchase Order", dn=doc.name, task_name = doc.set_project_task, amount = doc.grand_total, update_on = "committed", comment=None)
+	update_budjet_cost(dt="Purchase Order", dn=doc.name, task_name = doc.set_project_task, amount = doc.grand_total, update_on = "Committed", comment=None)
 	pass
 
 def on_cancel(doc,method):
-	update_budjet_cost(dt="Purchase Order", dn=doc.name, task_name = doc.set_project_task, amount = -doc.grand_total, update_on = "committed", comment=None)
+	update_budjet_cost(dt="Purchase Order", dn=doc.name, task_name = doc.set_project_task, amount = -doc.grand_total, update_on = "Committed", comment=None)
 	pass
 
 @frappe.whitelist()

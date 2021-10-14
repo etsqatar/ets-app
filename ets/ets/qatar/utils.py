@@ -6,8 +6,9 @@ import json
 from frappe import _
 from frappe.utils import comma_and, get_link_to_form, get_datetime
 
-from erpnext.regional.doctype.salary_information_file.salary_information_file import get_company_bank_details
 from erpnext.hr.doctype.attendance.attendance import get_month_map
+
+from ets.ets.doctype.salary_information_file.salary_information_file import get_company_bank_details
 
 frequency = {
 	"Monthly": "M",
@@ -31,6 +32,7 @@ def validate_payer_details(doc, method):
 
 def validate_bank_details_and_generate_csv(doc, method):
 	if frappe.get_cached_value('Company', doc.company, 'country') == "Qatar":
+		company_bank_details = ''
 		if not doc.payer_establishment_id:
 			company_bank_details = get_company_bank_details(doc.company)
 

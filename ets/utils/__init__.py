@@ -54,18 +54,22 @@ def log_rejection(dt,dn,field_name,_comment = None):
 	pass
 
 @frappe.whitelist()
-def update_budjet_cost(dt,dn,task_name, amount, update_on = "committed", comment=None):
+def update_budjet_cost(dt,dn,task_name, amount, update_on = "Committed", comment=None):
 	task = frappe.get_doc("Task", task_name)
 	previous_committed_cost = task.committed_cost
 	previous_available_budget = task.available_budget
 	previous_utilized_cost = task.utilized_cost
 	previous_incurred_cost = task.incurred_cost
-	if update_on == "committed":
+	if update_on == "Committed":
 		task.committed_cost = flt(flt(previous_committed_cost) + flt(amount))
-	elif update_on == "utilized":
-		task.committed_cost = flt(flt(previous_utilized_cost) + flt(amount))
-	elif update_on == "incurred":
-		task.committed_cost = flt(flt(previous_incurred_cost) + flt(amount))
+	elif update_on == "Utilized":
+		task.utilized_cost = flt(flt(previous_utilized_cost) + flt(amount))
+	elif update_on == "Incurred":
+		task.incurred_cost = flt(flt(previous_incurred_cost) + flt(amount))
+	elif update_on == "Committed|Incurred|Utilized":
+		task.committed_cost = flt(flt(previous_committed_cost) + flt(amount))
+		task.utilized_cost = flt(flt(previous_utilized_cost) + flt(amount))
+		task.incurred_cost = flt(flt(previous_incurred_cost) + flt(amount))
 	task.flags.ignore_permissions = True
 	task.flags.ignore_validate_update_after_submit = True
 	task.save()
@@ -80,34 +84,37 @@ def update_budjet_cost(dt,dn,task_name, amount, update_on = "committed", comment
 
 	log_budget(dt=dt, dn=dn, task_name=task_name,\
 		 previous_committed_cost=previous_committed_cost,\
+			 amount = amount,\
 			  previous_incurred_cost=previous_incurred_cost,\
 				   previous_utilized_cost=previous_utilized_cost,\
 					    previous_available_budget=previous_available_budget,\
 							 field_name = "budget_log",\
-								  _comment=comment if comment else f"Cost Update On {update_on}")
+								  _comment=f"Cost Update On {update_on} - {comment}")
 
 @frappe.whitelist()
-def log_budget(dt,dn,task_name,previous_committed_cost,previous_incurred_cost,previous_utilized_cost,previous_available_budget,field_name = "budget_log",_comment=None):
-	doc = frappe.get_doc("Task",task_name)
+def log_budget(dt,dn,task_name,previous_committed_cost,previous_incurred_cost,previous_utilized_cost,previous_available_budget, amount, field_name = "budget_log",_comment=None):
+	doc_task = frappe.get_doc("Task",task_name)
+	from_doc = frappe.get_value(dt,dn)
 	user = frappe.session.user
 	rejection_log = {
 				"user": user,
 				"user_name": frappe.get_value("User",user,"full_name"),
 				"comment": _comment,
 				"on": dt,
-				"for": dn,
+				"for": dn if from_doc else None,
+				"value": flt(amount),
 				"at": now_datetime(),
 				"previous_committed_cost": previous_committed_cost,
-				"new_committed_cost" : doc.committed_cost,
+				"new_committed_cost" : doc_task.committed_cost,
 				"previous_incurred_cost":previous_incurred_cost,
-				"new_incurred_cost": doc.incurred_cost,
+				"new_incurred_cost": doc_task.incurred_cost,
 				"previous_utilized_cost": previous_utilized_cost,
-				"new_utilized_cost": doc.utilized_cost,
+				"new_utilized_cost": doc_task.utilized_cost,
 				"previous_available_budget":previous_available_budget,
-				"new_available_budget":doc.available_budget,
+				"new_available_budget":doc_task.available_budget,
             }
-	doc.append(field_name, rejection_log)
-	doc.flags.ignore_permissions = True
-	doc.flags.ignore_validate_update_after_submit = True
-	doc.save()
+	doc_task.append(field_name, rejection_log)
+	doc_task.flags.ignore_permissions = True
+	doc_task.flags.ignore_validate_update_after_submit = True
+	doc_task.save()
 	pass

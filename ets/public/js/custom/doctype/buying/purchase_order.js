@@ -43,6 +43,33 @@ frappe.ui.form.on('Purchase Order', {
 		init_field_task_title(frm, 'set_project_task');
 		autofill_project(frm.doc.items,'project',frm.doc.set_project);
 		autofill_project(frm.doc.items,'task',frm.doc.set_project_task);
+		cur_frm.fields_dict.set_project_task_group.get_query = function(doc) {
+			return {
+				filters: [
+					["project", "=", doc.set_project],
+					["is_group", "=",1]
+				]
+			}
+		};
+		cur_frm.fields_dict.set_project_task.get_query = function(doc) {
+			return {
+				filters: [
+					["project", "=", doc.set_project],
+					["is_group", "=",0],
+					["parent_task", "=",doc.set_project_task_group]
+				]
+			}
+		};
+	
+		frm.fields_dict['items'].grid.get_field('task').get_query = function(doc, cdt, cdn) {
+			var child = locals[cdt][cdn];
+			return {    
+				filters:[
+					['project', '=', child.project],
+					['is_group', '=', 0]
+				]
+			}
+		};
 		// console.log(frm.selected_workflow_action);
 	},
 	before_workflow_action: () => {
@@ -117,35 +144,35 @@ let reject_items = (opts) => {
 	dialog.show();
 }
 
-frappe.ui.form.on("Purchase Order", "refresh", function(frm) {
-	cur_frm.fields_dict.set_project_task_group.get_query = function(doc) {
-		return {
-			filters: [
-				["project", "=", doc.set_project],
-				["is_group", "=",1]
-			]
-		}
-	}
-	cur_frm.fields_dict.set_project_task.get_query = function(doc) {
-		return {
-			filters: [
-				["project", "=", doc.set_project],
-				["is_group", "=",0],
-				["parent_task", "=",doc.set_project_task_group]
-			]
-		}
-	}
+// frappe.ui.form.on("Purchase Order", "refresh", function(frm) {
+// 	cur_frm.fields_dict.set_project_task_group.get_query = function(doc) {
+// 		return {
+// 			filters: [
+// 				["project", "=", doc.set_project],
+// 				["is_group", "=",1]
+// 			]
+// 		}
+// 	}
+// 	cur_frm.fields_dict.set_project_task.get_query = function(doc) {
+// 		return {
+// 			filters: [
+// 				["project", "=", doc.set_project],
+// 				["is_group", "=",0],
+// 				["parent_task", "=",doc.set_project_task_group]
+// 			]
+// 		}
+// 	}
 
-    frm.fields_dict['items'].grid.get_field('task').get_query = function(doc, cdt, cdn) {
-        var child = locals[cdt][cdn];
-        return {    
-            filters:[
-                ['project', '=', child.project],
-				['is_group', '=', 0]
-            ]
-        }
-    }
-});
+//     frm.fields_dict['items'].grid.get_field('task').get_query = function(doc, cdt, cdn) {
+//         var child = locals[cdt][cdn];
+//         return {    
+//             filters:[
+//                 ['project', '=', child.project],
+// 				['is_group', '=', 0]
+//             ]
+//         }
+//     }
+// });
 
 
 let approve_items = (opts) => {

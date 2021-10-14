@@ -159,3 +159,6 @@ let render_field_title = (frm, title, text) => {
 	let field = frm.fields_dict[title];
 	field.label_span.innerHTML = `${__(field._label)}${text}`;
 };
+
+// Manufacture
+// Customer Provided
