@@ -2,10 +2,12 @@ frappe.ui.form.on('Stock Entry', {
 	refresh: frm => {
 		init_field_task_title(frm, 'set_project_task_group');
 		init_field_task_title(frm, 'set_project_task');
-		autofill_project(frm.doc.items,'project',frm.doc.set_project);
-		autofill_project(frm.doc.items,'task',frm.doc.set_project_task);
-        frm.set_value("project", frm.doc.set_project);
-        frm.set_value("task", frm.doc.set_project_task);
+		if (frm.docstatus == 0){
+			autofill_project(frm.doc.items,'project',frm.doc.set_project);
+			autofill_project(frm.doc.items,'task',frm.doc.set_project_task);
+			frm.set_value("project", frm.doc.set_project);
+			frm.set_value("task", frm.doc.set_project_task);
+		}
 		cur_frm.fields_dict.set_project_task_group.get_query = function(doc) {
 			return {
 				filters: [
