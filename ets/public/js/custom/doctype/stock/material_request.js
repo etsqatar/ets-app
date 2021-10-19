@@ -31,14 +31,27 @@ frappe.ui.form.on('Material Request', {
 			if(me.frm.selected_workflow_action == "Reject"){
 				reject_({frm: me.frm});
 			}else if(me.frm.selected_workflow_action == "Proceed Approval"){
-				frappe.xcall('frappe.model.workflow.apply_workflow',
-					{doc: me.frm.doc, action: me.frm.selected_workflow_action})
-					.then((doc) => {
-						frappe.model.sync(doc);
-						me.frm.refresh();
-						me.frm.selected_workflow_action = null;
-						me.frm.script_manager.trigger("after_workflow_action");
-					});	
+				frappe.call({
+					method: "ets.docs.stock.material_request.validate_task_budget",
+					args: { "doc": me.frm.doc.name},
+					// freeze: true,
+					callback: function (r) {
+						console.log(r);
+						if(r.budget_aval){
+							frappe.xcall('frappe.model.workflow.apply_workflow',
+								{doc: me.frm.doc, action: me.frm.selected_workflow_action})
+								.then((doc) => {
+									frappe.model.sync(doc);
+									me.frm.refresh();
+									me.frm.selected_workflow_action = null;
+									me.frm.script_manager.trigger("after_workflow_action");
+								});	
+						}else{
+							frappe.msgprint(r.mgs);
+						}
+					}
+				});	
+				
 			}else{
 				approve_({frm: me.frm});
 			}
@@ -99,23 +112,36 @@ let approve_ = (opts) => {
 		],
 		primary_action: () => {
 			dialog.hide();
-			let vals = dialog.get_values();			
-			frappe.xcall('frappe.model.workflow.apply_workflow',
-				{doc: frm.doc, action: frm.selected_workflow_action})
-				.then((doc) => {
-					frappe.model.sync(doc);
-					
-					frm.selected_workflow_action = null;
-					frappe.call({
-						method: "ets.utils.log_approval",
-						args: {  "dt": frm.doctype,"dn": frm.docname, "field_name" : "approval_log", "_comment" : vals.approver_comment},
-						// freeze: true,
-						callback: function (r) {
-							frm.script_manager.trigger("after_workflow_action");
-							frm.refresh();
-						}
-					});
-				});
+			let vals = dialog.get_values();		
+			frappe.call({
+				method: "ets.docs.stock.material_request.validate_task_budget",
+				args: { "doc": me.frm.doc.name},
+				// freeze: true,
+				callback: function (r) {
+					console.log(r);
+					if(r.budget_aval){
+						frappe.xcall('frappe.model.workflow.apply_workflow',
+						{doc: frm.doc, action: frm.selected_workflow_action})
+						.then((doc) => {
+							frappe.model.sync(doc);
+							
+							frm.selected_workflow_action = null;
+							frappe.call({
+								method: "ets.utils.log_approval",
+								args: {  "dt": frm.doctype,"dn": frm.docname, "field_name" : "approval_log", "_comment" : vals.approver_comment},
+								// freeze: true,
+								callback: function (r) {
+									frm.script_manager.trigger("after_workflow_action");
+									frm.refresh();
+								}
+							});
+						});
+					}else{
+						frappe.msgprint(r.mgs);
+					}
+				}
+			});		
+			
 		},
 		primary_action_label: __('Approve')
 	});

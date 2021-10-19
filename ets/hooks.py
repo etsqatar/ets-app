@@ -119,6 +119,12 @@ doc_events = {
         "on_submit": "ets.docs.stock.purchase_receipt.on_submit",
         "on_cancel": "ets.docs.stock.purchase_receipt.on_cancel",
     },
+	"Material Request": {
+        "validate": "ets.docs.stock.material_request.validate",
+        "on_update": "ets.docs.stock.material_request.on_update",
+        "on_submit": "ets.docs.stock.material_request.on_submit",
+        "on_cancel": "ets.docs.stock.material_request.on_cancel",
+    },
 	"Stock Entry": {
         "validate": "ets.docs.stock.stock_entry.validate",
         "on_update": "ets.docs.stock.stock_entry.on_update",
